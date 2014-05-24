@@ -16,109 +16,23 @@
  * and is licensed under the MIT license.
  */
 
-namespace ProxyManagerTest;
+namespace OcramiusTest;
 
 use PHPUnit_Framework_TestCase;
-use ProxyManager\Configuration;
+use Ocramius\Ocramius;
 
 /**
- * Tests for {@see \ProxyManager\Configuration}
+ * Tests for {@see \Ocramius\Ocramius}
  *
  * @author Marco Pivetta <ocramius@gmail.com>
  * @license MIT
+ *
+ * @covers \Ocramius\Ocramius
  */
-class ConfigurationTest extends PHPUnit_Framework_TestCase
+class OcramiusTest extends PHPUnit_Framework_TestCase
 {
-    /**
-     * @var \ProxyManager\Configuration
-     */
-    protected $configuration;
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setUp()
+    public function testInstantiate()
     {
-        $this->configuration = new Configuration();
-    }
-
-    /**
-     * @covers \ProxyManager\Configuration::getProxiesNamespace
-     * @covers \ProxyManager\Configuration::setProxiesNamespace
-     */
-    public function testGetSetProxiesNamespace()
-    {
-        $this->assertSame(
-            'ProxyManagerGeneratedProxy',
-            $this->configuration->getProxiesNamespace(),
-            'Default setting check for BC'
-        );
-
-        $this->configuration->setProxiesNamespace('foo');
-        $this->assertSame('foo', $this->configuration->getProxiesNamespace());
-    }
-
-    /**
-     * @covers \ProxyManager\Configuration::getClassNameInflector
-     * @covers \ProxyManager\Configuration::setClassNameInflector
-     */
-    public function testSetGetClassNameInflector()
-    {
-        $this->assertInstanceOf(
-            'ProxyManager\\Inflector\\ClassNameInflectorInterface',
-            $this->configuration->getClassNameInflector()
-        );
-
-        $inflector = $this->getMock('ProxyManager\\Inflector\\ClassNameInflectorInterface');
-
-        $this->configuration->setClassNameInflector($inflector);
-        $this->assertSame($inflector, $this->configuration->getClassNameInflector());
-    }
-
-    /**
-     * @covers \ProxyManager\Configuration::getGeneratorStrategy
-     * @covers \ProxyManager\Configuration::setGeneratorStrategy
-     */
-    public function testSetGetGeneratorStrategy()
-    {
-
-        $this->assertInstanceOf(
-            'ProxyManager\\GeneratorStrategy\\GeneratorStrategyInterface',
-            $this->configuration->getGeneratorStrategy()
-        );
-
-        $strategy = $this->getMock('ProxyManager\\GeneratorStrategy\\GeneratorStrategyInterface');
-
-        $this->configuration->setGeneratorStrategy($strategy);
-        $this->assertSame($strategy, $this->configuration->getGeneratorStrategy());
-    }
-
-    /**
-     * @covers \ProxyManager\Configuration::getProxiesTargetDir
-     * @covers \ProxyManager\Configuration::setProxiesTargetDir
-     */
-    public function testSetGetProxiesTargetDir()
-    {
-        $this->assertTrue(is_dir($this->configuration->getProxiesTargetDir()));
-
-        $this->configuration->setProxiesTargetDir(__DIR__);
-        $this->assertSame(__DIR__, $this->configuration->getProxiesTargetDir());
-    }
-
-    /**
-     * @covers \ProxyManager\Configuration::getProxyAutoloader
-     * @covers \ProxyManager\Configuration::setProxyAutoloader
-     */
-    public function testSetGetProxyAutoloader()
-    {
-        $this->assertInstanceOf(
-            'ProxyManager\\Autoloader\\AutoloaderInterface',
-            $this->configuration->getProxyAutoloader()
-        );
-
-        $autoloader = $this->getMock('ProxyManager\\Autoloader\\AutoloaderInterface');
-
-        $this->configuration->setProxyAutoloader($autoloader);
-        $this->assertSame($autoloader, $this->configuration->getProxyAutoloader());
+        $this->assertInstanceOf(Ocramius::class, new Ocramius());
     }
 }
