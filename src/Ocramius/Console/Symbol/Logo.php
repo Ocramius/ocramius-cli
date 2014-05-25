@@ -22,7 +22,10 @@ use Zend\Console\Adapter\AdapterInterface as ConsoleAdapter;
 use Zend\Console\ColorInterface;
 
 /**
- * Class Logo
+ * The Ocramius Super-Mario image
+ *
+ * @author Marco Pivetta <ocramius@gmail.com>
+ * @license MIT
  */
 class Logo
 {
