@@ -60,10 +60,28 @@ class Help
         }
 
         if ($this->solveException($console, $report)) {
-            $console->writeLine('That is awesome! I guess I can\'t help further than that', ColorInterface::GREEN);
-
-            return $report;
+            return $this->success($console, $report);
         }
+
+        if ($this->helpDebugging($console, $report)) {
+            return $this->success($console, $report);
+        }
+
+        $console->writeLine('Sorry, I can\'t help any more for now :-(');
+
+        return $report;
+    }
+
+    /**
+     * @param ConsoleAdapter $console
+     * @param HelpReport $report
+     *
+     * @return HelpReport
+     */
+    private function success(ConsoleAdapter $console, HelpReport $report)
+    {
+        $console->writeLine('That is awesome! I guess I can\'t help further than that', ColorInterface::GREEN);
+        $report->setSolved(true);
 
         return $report;
     }
@@ -94,7 +112,7 @@ class Help
      * @param ConsoleAdapter $console
      * @param HelpReport $report
      *
-     * @return bool|string[]
+     * @return bool
      */
     private function solveException(ConsoleAdapter $console, HelpReport $report)
     {
@@ -135,7 +153,7 @@ class Help
     /**
      * @param ConsoleAdapter $console
      *
-     * @return string
+     * @return null|string
      */
     private function askForExceptionClass(ConsoleAdapter $console)
     {
@@ -145,7 +163,7 @@ class Help
     /**
      * @param ConsoleAdapter $console
      *
-     * @return string
+     * @return null|string
      */
     private function askForExceptionMessage(ConsoleAdapter $console)
     {
@@ -155,7 +173,7 @@ class Help
     /**
      * @param ConsoleAdapter $console
      *
-     * @return string
+     * @return null|string
      */
     private function askForExceptionPath(ConsoleAdapter $console)
     {
@@ -164,19 +182,67 @@ class Help
     /**
      * @param ConsoleAdapter $console
      *
-     * @return string
+     * @return null|string
      */
     private function askForExceptionLine(ConsoleAdapter $console)
     {
         return $this->askNumberQuestion('Please enter the line number at which the exception was thrown:', $console);
     }
 
+    /**
+     * @param ConsoleAdapter $console
+     *
+     * @return null|string
+     */
     private function askForExceptionReference(ConsoleAdapter $console)
     {
         return $this->askUrlQuestion(
             'Please enter the URL of the documentation/reference/answer that you were able to find for the exception',
             $console
         );
+    }
+
+    /**
+     * @param ConsoleAdapter $console
+     * @param HelpReport $report
+     *
+     * @return bool
+     */
+    private function helpDebugging(ConsoleAdapter $console, HelpReport $report)
+    {
+        while (! $this->askBooleanQuestion('Did you try debugging/insulating the source of the problem?', $console)) {
+            $console->writeLine('Please try insulating the source of your problem first', ColorInterface::CYAN);
+        }
+
+        $identified = $this->askBooleanQuestion('Did you identify any files causing the problem?', $console);
+
+        if ($identified) {
+            do {
+                $report->addAffectedFile(
+                    $this->askFileQuestion('Please enter the path to the affected file', $console)
+                );
+            } while ($this->askBooleanQuestion('Are any other files affected?', $console));
+
+            while (! $this->askBooleanQuestion(
+                'Did you write any functional/unit test to identify the problem?',
+                $console
+            )) {
+                $console->writeLine(
+                    'Please write a small unit/integration test about the problem',
+                    ColorInterface::CYAN
+                );
+            }
+
+            do {
+                $report->addTestFile($this->askFileQuestion('Please enter the path to the test file', $console));
+            } while ($this->askBooleanQuestion('Are there any other test files?', $console));
+        }
+
+        if ($this->askBooleanQuestion('Did you solve the problem with the test?', $console)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
