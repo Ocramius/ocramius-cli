@@ -34,6 +34,21 @@ class HelpReport
     private $exceptions = [];
 
     /**
+     * @var string[]
+     */
+    private $affectedFiles = [];
+
+    /**
+     * @var string[]
+     */
+    private $testFiles = [];
+
+    /**
+     * @var bool
+     */
+    private $solved = false;
+
+    /**
      * @return string
      */
     public function getDescription()
@@ -63,5 +78,53 @@ class HelpReport
     public function getExceptionMessages()
     {
         return $this->exceptions;
+    }
+
+    /**
+     * @param string $file
+     */
+    public function addAffectedFile($file)
+    {
+        $this->affectedFiles[] = (string) $file;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getAffectedFiles()
+    {
+        return $this->affectedFiles;
+    }
+
+    /**
+     * @param string $file
+     */
+    public function addTestFile($file)
+    {
+        $this->testFiles[] = (string) $file;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getTestFiles()
+    {
+        return $this->testFiles;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isSolved()
+    {
+        return $this->solved;
+    }
+
+    /**
+     * @param boolean $solved
+     */
+    public function setSolved($solved)
+    {
+        $this->solved = (bool) $solved;
     }
 } 
