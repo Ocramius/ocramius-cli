@@ -2,6 +2,7 @@
 <?php
 
 use Ocramius\Console\Command\Help;
+use Ocramius\Console\Symbol\Logo;
 use Zend\Console\Console;
 
 $files = [
@@ -24,6 +25,8 @@ if (! isset($loader)) {
 }
 
 $console = Console::getInstance();
+$logo    = new Logo();
 $help    = new Help();
 
+$logo->draw($console);
 $help->help($console);
