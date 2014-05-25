@@ -118,20 +118,18 @@ class Help
             );
         }
 
-        if ($this->askBooleanQuestion('Did you find a solution online?', $console)) {
-            if ($this->askBooleanQuestion('Can you help me collect the resources you found?', $console)) {
-                while (! $this->loopQuestion([$this, 'askForExceptionReference'], $console, $report)) {
-                    $console->writeLine(
-                        'Please search for the exception message online, then get back here.',
-                        ColorInterface::GRAY
-                    );
-                }
-            }
+        $foundSolution = $this->askBooleanQuestion('Did you find a solution online?', $console);
 
-            return true;
+        if ($this->askBooleanQuestion('Can you help me collect any resources that you may have found?', $console)) {
+            while (! $this->loopQuestion([$this, 'askForExceptionReference'], $console, $report)) {
+                $console->writeLine(
+                    'Please search for the exception message online, then get back here.',
+                    ColorInterface::GRAY
+                );
+            }
         }
 
-        return false;
+        return $foundSolution;
     }
 
     /**
@@ -254,7 +252,7 @@ class Help
         $path = $prompt->show();
 
         if (! is_file($path)) {
-            $console->writeLine('The file "' . $path . '" does not seem to exist!', ColorInterface::RED);
+            $console->writeLine('The file "' . $path . '" does not seem to be a file!', ColorInterface::RED);
 
             return null;
         }
@@ -284,7 +282,7 @@ class Help
 
         $url = $prompt->show();
 
-        if (!(new Uri())->isValid($url)) {
+        if (!(new Uri(['allowRelative' => false]))->isValid($url)) {
             $console->writeLine('The provided URL "' . $url . '" doesn\'t seem to be valid!', ColorInterface::RED);
 
             return null;
