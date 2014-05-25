@@ -2,6 +2,7 @@
 <?php
 
 use Ocramius\Console\Command\Help;
+use Ocramius\Console\Symbol\Goodbye;
 use Ocramius\Console\Symbol\Logo;
 use Zend\Console\Console;
 
@@ -27,8 +28,12 @@ if (! isset($loader)) {
 $console = Console::getInstance();
 $logo    = new Logo();
 $help    = new Help();
+$goodbye = new Goodbye();
 
 $logo->draw($console);
+
 $report = $help->help($console);
+
+$goodbye->draw($console);
 
 var_dump($report);
