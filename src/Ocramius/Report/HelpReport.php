@@ -18,10 +18,12 @@
 
 namespace Ocramius\Report;
 
+use JsonSerializable;
+
 /**
  * Help report - a simple (mutable) VO representing a help request
  */
-class HelpReport
+class HelpReport implements JsonSerializable
 {
     /**
      * @var string
@@ -127,4 +129,12 @@ class HelpReport
     {
         $this->solved = (bool) $solved;
     }
-} 
+
+    /**
+     * {@inheritDoc}
+     */
+    function jsonSerialize()
+    {
+        return get_object_vars($this);
+    }
+}
