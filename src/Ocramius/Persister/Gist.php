@@ -71,7 +71,7 @@ class Gist
             throw new \UnexpectedValueException('Could not obtain a valid GIST from the github API');
         }
 
-        $response = json_decode($response->getBody());
+        $response = json_decode($response->getBody(), true);
 
         return $response['url'];
     }
