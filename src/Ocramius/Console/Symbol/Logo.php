@@ -46,6 +46,8 @@ class Logo
     const LIGHT_CYAN    = ColorInterface::LIGHT_CYAN;
     const LIGHT_BROWN   = ColorInterface::LIGHT_WHITE;
 
+    const BACKGROUND = self::BLACK;
+
     private $dots = [
         [],
         [],
@@ -391,14 +393,14 @@ class Logo
         $remainingLength = $this->getWidth();
 
         foreach ($line as $dots) {
-            $bgColor         = isset($dots[1]) ? $dots[1] : null;
+            $bgColor         = isset($dots[1]) ? $dots[1] : self::BACKGROUND;
             $color           = isset($dots[2]) ? $dots[2] : null;
             $remainingLength -= $dots[0] * static::DOT_WIDTH_MULTIPLIER;
 
             $console->write(str_repeat(' ', $dots[0] * static::DOT_WIDTH_MULTIPLIER), $color, $bgColor);
         }
 
-        $console->write(str_repeat(' ', $remainingLength));
+        $console->write(str_repeat(' ', $remainingLength), null, self::BACKGROUND);
         $console->writeLine();
     }
 
