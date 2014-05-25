@@ -73,6 +73,6 @@ class Gist
 
         $response = json_decode($response->getBody(), true);
 
-        return $response['url'];
+        return $response['html_url'];
     }
 }
