@@ -29,4 +29,6 @@ $logo    = new Logo();
 $help    = new Help();
 
 $logo->draw($console);
-$help->help($console);
+$report = $help->help($console);
+
+var_dump($report);
