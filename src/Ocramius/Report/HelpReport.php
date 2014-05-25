@@ -24,23 +24,44 @@ namespace Ocramius\Report;
 class HelpReport
 {
     /**
-     * @var bool|null
+     * @var string
      */
-    private $softwareProblem = false;
+    private $description = '';
 
     /**
-     * @return bool|null
+     * @var array[]
      */
-    public function getSoftwareProblem()
+    private $exceptions = [];
+
+    /**
+     * @return string
+     */
+    public function getDescription()
     {
-        return $this->softwareProblem;
+        return $this->description;
     }
 
     /**
-     * @param bool|null $softwareProblem
+     * @param string $description
      */
-    public function setSoftwareProblem($softwareProblem)
+    public function setDescription($description)
     {
-        $this->softwareProblem = null === $softwareProblem ? null : (bool) $softwareProblem;
+        $this->description = (string) $description;
+    }
+
+    /**
+     * @param array $exception
+     */
+    public function addException(array $exception)
+    {
+        $this->exceptions[] = $exception;
+    }
+
+    /**
+     * @return array[]
+     */
+    public function getExceptionMessages()
+    {
+        return $this->exceptions;
     }
 } 
