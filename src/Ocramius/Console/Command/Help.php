@@ -19,91 +19,175 @@
 namespace Ocramius\Console\Command;
 
 use Ocramius\Report\HelpReport;
-use Zend\Console\Adapter\AbstractAdapter;
+use Zend\Console\Adapter\AbstractAdapter as ConsoleAdapter;
 use Zend\Console\ColorInterface;
 use Zend\Console\Console;
 use Zend\Console\Prompt\Confirm;
 use Zend\Console\Prompt\Line;
+use Zend\Console\Prompt\Number;
+use Zend\Validator\Uri;
 
 /**
  * Renders a simple "help" console
  */
 class Help
 {
-    public function help(AbstractAdapter $console)
+    /**
+     * Starts interactive support and produces an {@see \Ocramius\Report\HelpReport} once done
+     *
+     * @param ConsoleAdapter $console
+     *
+     * @return HelpReport
+     */
+    public function help(ConsoleAdapter $console)
     {
         $console->write(' ', ColorInterface::YELLOW);
         $console->writeLine('Hi, I\'m Ocramius!');
-        $console->writeLine('I\'m here to help you with your problem.');
+        $console->writeLine('I\'m here to help you with your programming problem.');
         $console->writeLine('I will just ask you a set of questions, and we\'ll figure something out.');
 
         $report = new HelpReport();
 
-        if (! $this->loopQuestion([$this, 'askIfHelpIsNeeded'], $console, $report)) {
+        $report->setDescription($this->loopQuestion([$this, 'askForProblemDescription'], $console, $report));
+
+        if (!$this->loopQuestion([$this, 'askIfHelpIsNeeded'], $console, $report)) {
             $console->writeLine(
                 'All good then! Good luck! I will wait for you if you need any help :-D',
                 ColorInterface::GREEN
             );
 
-            return;
+            return $report;
         }
 
-        if (! $softwareBug = $this->loopQuestion([$this, 'askIfItIsASoftwareBug'], $console, $report)) {
-            $console->writeLine(
-                'Yeah, about that... I can only help with software bugs. :( I\'ll try to help anyway!!',
-                ColorInterface::GRAY
-            );
+        if ($this->solveException($console, $report)) {
+            $console->writeLine('That is awesome! I guess I can\'t help further than that', ColorInterface::GREEN);
+
+            return $report;
         }
 
-        $report->setSoftwareProblem($softwareBug);
-
-
-
-
-
-
+        return $report;
     }
 
     /**
-     * @param AbstractAdapter $console
+     * @param ConsoleAdapter $console
+     *
+     * @return string|null
+     */
+    private function askForProblemDescription(ConsoleAdapter $console)
+    {
+        return $this->askTextQuestion('Please enter a small description of your problem:', $console);
+    }
+
+    /**
+     * @param ConsoleAdapter $console
      *
      * @return bool|null
      */
-    private function askIfHelpIsNeeded(AbstractAdapter $console)
+    private function askIfHelpIsNeeded(ConsoleAdapter $console)
     {
         return $this->askBooleanQuestion('Are you here to ask for help?', $console);
     }
 
     /**
-     * @param AbstractAdapter $console
-     *
-     * @return bool|null
-     */
-    private function askIfItIsASoftwareBug(AbstractAdapter $console)
-    {
-        return $this->askBooleanQuestion('Is it a software bug?', $console);
-    }
-
-    /**
      * Ask if an error message is available
      *
-     * @param AbstractAdapter $console
+     * @param ConsoleAdapter $console
      * @param HelpReport $report
      *
      * @return bool|string[]
      */
-    private function askIfAnErrorIsAvailable(AbstractAdapter $console, HelpReport $report)
+    private function solveException(ConsoleAdapter $console, HelpReport $report)
     {
-        $this->askBooleanQuestion('Is an exception message available?', $console);
+        if (! $this->askBooleanQuestion('Is an exception message available?', $console)) {
+            return false;
+        }
+
+        do {
+            $report->addException([
+                'class'   => $this->loopQuestion([$this, 'askForExceptionClass'], $console, $report),
+                'message' => $this->loopQuestion([$this, 'askForExceptionMessage'], $console, $report),
+                'path'    => $this->loopQuestion([$this, 'askForExceptionPath'], $console, $report),
+                'line'    => $this->loopQuestion([$this, 'askForExceptionLine'], $console, $report),
+            ]);
+        } while ($this->askBooleanQuestion('Are there any previous exceptions?', $console));
+
+        while (! $this->askBooleanQuestion('Did you search for the exception message online?', $console)) {
+            $console->writeLine(
+                'Please search for the exception message online, then get back here.',
+                ColorInterface::GRAY
+            );
+        }
+
+        if ($this->askBooleanQuestion('Did you find a solution online?', $console)) {
+            if ($this->askBooleanQuestion('Can you help me collect the resources you found?', $console)) {
+                while (! $this->loopQuestion([$this, 'askForExceptionReference'], $console, $report)) {
+                    $console->writeLine(
+                        'Please search for the exception message online, then get back here.',
+                        ColorInterface::GRAY
+                    );
+                }
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param ConsoleAdapter $console
+     *
+     * @return string
+     */
+    private function askForExceptionClass(ConsoleAdapter $console)
+    {
+        return $this->askTextQuestion('Please enter the name of the exception class:', $console);
+    }
+
+    /**
+     * @param ConsoleAdapter $console
+     *
+     * @return string
+     */
+    private function askForExceptionMessage(ConsoleAdapter $console)
+    {
+        return $this->askTextQuestion('Please enter the exception message:', $console);
+    }
+
+    /**
+     * @param ConsoleAdapter $console
+     *
+     * @return string
+     */
+    private function askForExceptionPath(ConsoleAdapter $console)
+    {
+        return $this->askFileQuestion('Please enter the path of the file where the exception was thrown:', $console);
+    }
+    /**
+     * @param ConsoleAdapter $console
+     *
+     * @return string
+     */
+    private function askForExceptionLine(ConsoleAdapter $console)
+    {
+        return $this->askNumberQuestion('Please enter the line number at which the exception was thrown:', $console);
+    }
+
+    private function askForExceptionReference(ConsoleAdapter $console)
+    {
+        return $this->askUrlQuestion(
+            'Please enter the URL of the documentation/reference/answer that you were able to find for the exception',
+            $console
+        );
     }
 
     /**
      * @param $question
-     * @param AbstractAdapter $console
+     * @param ConsoleAdapter $console
      *
      * @return bool
      */
-    private function askBooleanQuestion($question, AbstractAdapter $console)
+    private function askBooleanQuestion($question, ConsoleAdapter $console)
     {
         $console->write($question . ' ', ColorInterface::CYAN);
         $console->writeLine('[y/n]', ColorInterface::GREEN);
@@ -116,13 +200,107 @@ class Help
     }
 
     /**
+     * @param $question
+     * @param ConsoleAdapter $console
+     *
+     * @return string|null
+     */
+    private function askTextQuestion($question, ConsoleAdapter $console)
+    {
+        $console->writeLine($question . ' (in 1 line)', ColorInterface::CYAN);
+
+        $prompt = new Line('');
+
+        $prompt->setConsole($console);
+
+        $result = $prompt->show();
+
+        return ((bool) (string) $result) ? (string) $result : null;
+    }
+
+    /**
+     * @param $question
+     * @param ConsoleAdapter $console
+     *
+     * @return string|null
+     */
+    private function askNumberQuestion($question, ConsoleAdapter $console)
+    {
+        $console->writeLine($question . ' ([0-9]+)', ColorInterface::CYAN);
+
+        $prompt = new Number('');
+
+        $prompt->setConsole($console);
+
+        $result = $prompt->show();
+
+        return is_numeric($result) ? $result : null;
+    }
+
+    /**
+     * @param $question
+     * @param ConsoleAdapter $console
+     *
+     * @return string|null
+     */
+    private function askFileQuestion($question, ConsoleAdapter $console)
+    {
+        $console->writeLine($question . ' (file path)', ColorInterface::CYAN);
+
+        $prompt = new Line('');
+
+        $prompt->setConsole($console);
+
+        $path = $prompt->show();
+
+        if (! file_exists($path)) {
+            $console->writeLine('The file "' . $path . '" does not seem to exist!', ColorInterface::RED);
+
+            return null;
+        }
+
+        if (! is_readable($path)) {
+            $console->writeLine('I cannot read the file "' . $path . '"!', ColorInterface::RED);
+
+            return null;
+        }
+
+        return realpath($path);
+    }
+
+    /**
+     * @param $question
+     * @param ConsoleAdapter $console
+     *
+     * @return string|null
+     */
+    private function askUrlQuestion($question, ConsoleAdapter $console)
+    {
+        $console->writeLine($question . ' (URL)', ColorInterface::CYAN);
+
+        $prompt = new Line('');
+
+        $prompt->setConsole($console);
+
+        $url = $prompt->show();
+
+        if (!(new Uri())->isValid($url)) {
+            $console->writeLine('The provided URL "' . $url . '" doesn\'t seem to be valid!', ColorInterface::RED);
+
+            return null;
+        }
+
+        return $url;
+    }
+
+    /**
      * @param callable        $question
-     * @param AbstractAdapter $console
+     * @param ConsoleAdapter $console
      * @param HelpReport      $report
      *
      * @return mixed
      */
-    private function loopQuestion(callable $question, AbstractAdapter $console, HelpReport $report)
+    private function loopQuestion(callable $question, ConsoleAdapter $console, HelpReport $report)
     {
         do {
             $answer = $question($console, $report);
