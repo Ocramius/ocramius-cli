@@ -253,7 +253,7 @@ class Help
 
         $path = $prompt->show();
 
-        if (! file_exists($path)) {
+        if (! is_file($path)) {
             $console->writeLine('The file "' . $path . '" does not seem to exist!', ColorInterface::RED);
 
             return null;
