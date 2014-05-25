@@ -353,11 +353,23 @@ class Logo
         ],
     ];
 
+    /**
+     * Draw the logo to the given console
+     *
+     * @param ConsoleAdapter $console
+     *
+     * @return void
+     */
     public function draw(ConsoleAdapter $console)
     {
         $this->drawLines($console);
     }
 
+    /**
+     * @param ConsoleAdapter $console
+     *
+     * @return void
+     */
     private function drawLines(ConsoleAdapter $console)
     {
         array_map(
@@ -368,6 +380,12 @@ class Logo
         );
     }
 
+    /**
+     * @param ConsoleAdapter $console
+     * @param array $line
+     *
+     * @return void
+     */
     private function drawLine(ConsoleAdapter $console, array $line)
     {
         $remainingLength = $this->getWidth();
@@ -385,7 +403,9 @@ class Logo
     }
 
     /**
-     * @return int|mixed
+     * Retrieve the max width, based on all lines
+     *
+     * @return int
      */
     private function getWidth()
     {
