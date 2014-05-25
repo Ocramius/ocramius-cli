@@ -21,6 +21,7 @@ namespace Ocramius\Console\Command;
 use Ocramius\Report\HelpReport;
 use Zend\Console\Adapter\AbstractAdapter;
 use Zend\Console\ColorInterface;
+use Zend\Console\Console;
 use Zend\Console\Prompt\Confirm;
 use Zend\Console\Prompt\Line;
 
@@ -34,10 +35,11 @@ class Help
         $console->write(' ', ColorInterface::YELLOW);
         $console->writeLine('Hi, I\'m Ocramius!');
         $console->writeLine('I\'m here to help you with your problem.');
+        $console->writeLine('I will just ask you a set of questions, and we\'ll figure something out.');
 
         $report = new HelpReport();
 
-        if (! $this->loopQuestion([$this, 'askIfHelpIsNeeded'], $console)) {
+        if (! $this->loopQuestion([$this, 'askIfHelpIsNeeded'], $console, $report)) {
             $console->writeLine(
                 'All good then! Good luck! I will wait for you if you need any help :-D',
                 ColorInterface::GREEN
@@ -46,7 +48,7 @@ class Help
             return;
         }
 
-        if (! $softwareBug = $this->loopQuestion([$this, 'askIfItIsASoftwareBug'], $console)) {
+        if (! $softwareBug = $this->loopQuestion([$this, 'askIfItIsASoftwareBug'], $console, $report)) {
             $console->writeLine(
                 'Yeah, about that... I can only help with software bugs. :( I\'ll try to help anyway!!',
                 ColorInterface::GRAY
@@ -55,7 +57,7 @@ class Help
 
         $report->setSoftwareProblem($softwareBug);
 
-        
+
 
 
 
@@ -83,16 +85,28 @@ class Help
     }
 
     /**
+     * Ask if an error message is available
      *
+     * @param AbstractAdapter $console
+     * @param HelpReport $report
+     *
+     * @return bool|string[]
      */
-    private function askIfAnErrorIsAvailable()
+    private function askIfAnErrorIsAvailable(AbstractAdapter $console, HelpReport $report)
     {
-
+        $this->askBooleanQuestion('Is an exception message available?', $console);
     }
 
+    /**
+     * @param $question
+     * @param AbstractAdapter $console
+     *
+     * @return bool
+     */
     private function askBooleanQuestion($question, AbstractAdapter $console)
     {
-        $console->writeLine($question . ' [y/n]', ColorInterface::CYAN);
+        $console->write($question . ' ', ColorInterface::CYAN);
+        $console->writeLine('[y/n]', ColorInterface::GREEN);
 
         $prompt = new Confirm('');
 
@@ -101,10 +115,17 @@ class Help
         return (bool) $prompt->show();
     }
 
-    private function loopQuestion(callable $question, AbstractAdapter $console)
+    /**
+     * @param callable        $question
+     * @param AbstractAdapter $console
+     * @param HelpReport      $report
+     *
+     * @return mixed
+     */
+    private function loopQuestion(callable $question, AbstractAdapter $console, HelpReport $report)
     {
         do {
-            $answer = $question($console);
+            $answer = $question($console, $report);
         } while (null === $answer);
 
         return $answer;
