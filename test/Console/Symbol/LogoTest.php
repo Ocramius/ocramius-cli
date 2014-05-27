@@ -19,7 +19,6 @@
 namespace OcramiusTest\Console\Symbol;
 
 use Ocramius\Console\Symbol\Logo;
-use PHPUnit_Framework_TestCase;
 use Zend\Console\Adapter\AdapterInterface;
 use Zend\Console\Console;
 
@@ -28,7 +27,7 @@ use Zend\Console\Console;
  *
  * @covers \Ocramius\Console\Symbol\Logo
  */
-class LogoTest extends PHPUnit_Framework_TestCase
+class LogoTest extends \PHPUnit_Framework_TestCase
 {
     public function testDraw()
     {

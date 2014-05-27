@@ -19,7 +19,6 @@
 namespace OcramiusTest\Console\Command;
 
 use Ocramius\Console\Command\Help;
-use PHPUnit_Framework_TestCase;
 use Zend\Console\Console;
 
 /**
@@ -27,7 +26,7 @@ use Zend\Console\Console;
  *
  * @covers \Ocramius\Console\Command\Help
  */
-class HelpTest extends PHPUnit_Framework_TestCase
+class HelpTest extends \PHPUnit_Framework_TestCase
 {
     public function testHelp()
     {

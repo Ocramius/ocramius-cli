@@ -18,7 +18,6 @@
 
 namespace OcramiusTest;
 
-use PHPUnit_Framework_TestCase;
 use Ocramius\Ocramius;
 
 /**
@@ -29,7 +28,7 @@ use Ocramius\Ocramius;
  *
  * @covers \Ocramius\Ocramius
  */
-class OcramiusTest extends PHPUnit_Framework_TestCase
+class OcramiusTest extends \PHPUnit_Framework_TestCase
 {
     public function testInstantiate()
     {
