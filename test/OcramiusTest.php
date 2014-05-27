@@ -16,25 +16,22 @@
  * and is licensed under the MIT license.
  */
 
-namespace OcramiusTest\Console\Command;
+namespace OcramiusTest;
 
-use Ocramius\Console\Command\Help;
-use PHPUnit_Framework_TestCase;
-use Zend\Console\Console;
+use Ocramius\Ocramius;
 
 /**
- * Tests for {@see \Ocramius\Console\Command\Help}
+ * Tests for {@see \Ocramius\Ocramius}
  *
- * @covers \Ocramius\Console\Command\Help
+ * @author Marco Pivetta <ocramius@gmail.com>
+ * @license MIT
+ *
+ * @covers \Ocramius\Ocramius
  */
-class HelpTest extends PHPUnit_Framework_TestCase
+class OcramiusTest extends \PHPUnit_Framework_TestCase
 {
-    public function testHelp()
+    public function testInstantiate()
     {
-        $console = Console::getInstance();
-
-        $command = new Help();
-
-        $command->help($console);
+        $this->assertInstanceOf(Ocramius::class, new Ocramius());
     }
-} 
+}

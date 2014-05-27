@@ -17,9 +17,9 @@ $ git clone git://github.com/Ocramius/Ocramius.git
 You will then need to run a composer installation:
 
 ```sh
-$ cd ProxyManager
+$ cd Ocramius
 $ curl -s https://getcomposer.org/installer | php
-$ php composer.phar update
+$ php composer.phar install
 ```
 
 ## Testing
@@ -32,4 +32,3 @@ $ ./vendor/bin/phpunit
 
 Accepted coverage for new contributions is 80%. Any contribution not satisfying this requirement 
 won't be merged.
-

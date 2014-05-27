@@ -133,7 +133,7 @@ class HelpReport implements JsonSerializable
     /**
      * {@inheritDoc}
      */
-    function jsonSerialize()
+    public function jsonSerialize()
     {
         return get_object_vars($this);
     }

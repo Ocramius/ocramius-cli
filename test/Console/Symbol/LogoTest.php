@@ -16,23 +16,41 @@
  * and is licensed under the MIT license.
  */
 
-namespace OcramiusTest;
+namespace OcramiusTest\Console\Symbol;
 
-use PHPUnit_Framework_TestCase;
-use Ocramius\Ocramius;
+use Ocramius\Console\Symbol\Logo;
+use Zend\Console\Adapter\AdapterInterface;
+use Zend\Console\Console;
 
 /**
- * Tests for {@see \Ocramius\Ocramius}
+ * Tests for {@see \Ocramius\Console\Symbol\Logo}
  *
- * @author Marco Pivetta <ocramius@gmail.com>
- * @license MIT
- *
- * @covers \Ocramius\Ocramius
+ * @covers \Ocramius\Console\Symbol\Logo
  */
-class OcramiusTest extends PHPUnit_Framework_TestCase
+class LogoTest extends \PHPUnit_Framework_TestCase
 {
-    public function testInstantiate()
+    public function testDraw()
     {
-        $this->assertInstanceOf(Ocramius::class, new Ocramius());
+        /* @var $console AdapterInterface|\PHPUnit_Framework_MockObject_MockObject */
+        $console = $this->getMock(AdapterInterface::class);
+
+        $console->expects($this->atLeastOnce())->method('write');
+        $console->expects($this->atLeastOnce())->method('writeLine');
+
+        (new Logo())->draw($console);
+    }
+
+    /**
+     * @coversNothing
+     */
+    public function testDrawReal()
+    {
+        $console = Console::getInstance();
+
+        ob_start();
+        (new Logo())->draw($console);
+
+        $this->assertNotEmpty(ob_get_contents());
+        ob_end_clean();
     }
 }

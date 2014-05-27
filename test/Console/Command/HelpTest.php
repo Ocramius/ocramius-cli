@@ -16,42 +16,24 @@
  * and is licensed under the MIT license.
  */
 
-namespace OcramiusTest\Console\Symbol;
+namespace OcramiusTest\Console\Command;
 
-use Ocramius\Console\Symbol\Logo;
-use PHPUnit_Framework_TestCase;
-use Zend\Console\Adapter\AdapterInterface;
+use Ocramius\Console\Command\Help;
 use Zend\Console\Console;
 
 /**
- * Tests for {@see \Ocramius\Console\Symbol\Logo}
+ * Tests for {@see \Ocramius\Console\Command\Help}
  *
- * @covers \Ocramius\Console\Symbol\Logo
+ * @covers \Ocramius\Console\Command\Help
  */
-class LogoTest extends PHPUnit_Framework_TestCase
+class HelpTest extends \PHPUnit_Framework_TestCase
 {
-    public function testDraw()
-    {
-        /* @var $console AdapterInterface|\PHPUnit_Framework_MockObject_MockObject */
-        $console = $this->getMock(AdapterInterface::class);
-
-        $console->expects($this->atLeastOnce())->method('write');
-        $console->expects($this->atLeastOnce())->method('writeLine');
-
-        (new Logo())->draw($console);
-    }
-
-    /**
-     * @coversNothing
-     */
-    public function testDrawReal()
+    public function testHelp()
     {
         $console = Console::getInstance();
 
-        ob_start();
-        (new Logo())->draw($console);
+        $command = new Help();
 
-        $this->assertNotEmpty(ob_get_contents());
-        ob_end_clean();
+        $command->help($console);
     }
-}
+} 

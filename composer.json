@@ -12,6 +12,11 @@
             "name":     "Marco Pivetta",
             "email":    "ocramius@gmail.com",
             "homepage": "http://ocramius.github.com/"
+        },
+        {
+            "name":     "Luis Cordova",
+            "email":    "cordoval@gmail.com",
+            "homepage": "http://craftitonline.com/"
         }
     ],
     "require": {
@@ -27,12 +32,12 @@
     },
     "suggest": {},
     "autoload": {
-        "psr-0": {
+        "psr-4": {
             "Ocramius\\": "src"
         }
     },
     "autoload-dev": {
-        "psr-0": {
+        "psr-4": {
             "OcramiusTest\\": "test"
         }
     },
